@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jolie et Douce</title>
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.css">
+    <link rel="icon" href="img/logo.ico">
+    <script type="text/javascript" src="js/jquery-3.5.1.js"></script>
+    <script type="text/javascript" src="js/bootstrap.js"></script>
+    <script type="text/javascript">
+        var nombre = prompt('Ingrese un nombre', ' ');
+        alert('¡Bienvenido a Jolie et Douce' + ' ' + nombre + '!');
+        var url = "json/product.json";
+        $(document).ready(function(){
+            $.getJSON(url).done(function(products){
+                var productList = '';
+                //console.log('Lista de productos');
+                $.each(products, function(index, prod){
+                    //console.log(index + ' - ' + prod.nom);
+                    productList += '<div class="col-sm-2">';
+                    productList += '    <p>' + prod.nom + '<br>' + prod.mar + '</p>';
+                    productList += '    <img src="img/'+prod.img + '" class="img-responsive" style="width:100%" />';
+                    productList += '    <p><b>Precio:</b>' + prod.pre + "</p>";
+                    productList += '    <p><b>Cantidad:</b>' + prod.can + "</p>";
+                    productList += '    <a href="javascript:comprar(\'' + prod.nom  + '\')">Comprar</a>';
+                    productList += '</div>';
+                });
+                $('#products').html(productList);
+            });
+            $("button").click(function(){
+                console.log('Comprar');
+            });
+        });
+
+        var urlWhatsApp = 'https://wa.me/51988172108?text='
+
+        function comprar( producto ){
+            console.log('Comprar');
+            window.open(urlWhatsApp + 'Deseo el producto ' + producto );
+        }
+        function buscar()
+        {
+            var nombre = document.getElementById('nombre').value;
+            document.getElementById('respuesta').value = getSaludoNombreGeneral();
+            
+            var cMensaje = document.getElementById('mensaje');
+            cMensaje.innerHTML = '<b>' + getSaludoNombre(nombre) + '</b>';
+        }
+        var img = new Image();
+        // Variables de usuario - personalizar estas para cambiar la imagen cuando inicie el desplazamiento
+        // dirección y velocidad.
+        img.src = "ofert.jpg";
+        var CanvasXSize = 1400;
+        var CanvasYSize = 3000;
+        var speed = 1; //más bajo es más rápido
+        var scale = 1.05;
+        var y = -0.5; //desplazamiento vertical
+
+        // Programa principal
+
+        var dx = 0.75;
+        var imgW;
+        var imgH;
+        var x = 0;
+        var clearX;
+        var clearY;
+        var ctx;
+
+        img.onload = function() {
+            imgW = img.width * scale;
+            imgH = img.height * scale;
+            
+            if (imgW > CanvasXSize) {
+                // imagen más grande que canvas
+                x = CanvasXSize - imgW;
+            }
+            if (imgW > CanvasXSize) {
+                // ancho de imagen más grande que canvas
+                clearX = imgW;
+            } else {
+                clearX = CanvasXSize;
+            }
+            if (imgH > CanvasYSize) {
+                // altura de la imagen más grande que canvas
+                clearY = imgH;
+            } else {
+                clearY = CanvasYSize;
+            }
+            
+            // obtener contexto de canvas
+            ctx = document.getElementById('canvas').getContext('2d');
+         
+            // establecer frecuencia de actualización
+            return setInterval(draw, speed);
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, clearX, clearY); // clear the canvas
+            
+            // si la imagen es <= tamaño de Canvas
+            if (imgW <= CanvasXSize) {
+                // reiniciar, comenzar desde el principio
+                if (x > CanvasXSize) {
+                    x = -imgW + x;
+                }
+                // dibujar image1 adicional
+                if (x > 0) {
+                    ctx.drawImage(img, -imgW + x, y, imgW, imgH);
+                }
+                // dibujar image2 adicional
+                if (x - imgW > 0) {
+                    ctx.drawImage(img, -imgW * 2 + x, y, imgW, imgH);
+                }
+            }
+
+            // la imagen es > tamaño de Canvas
+            else {
+                // reiniciar, comenzar desde el principio
+                if (x > (CanvasXSize)) {
+                    x = CanvasXSize - imgW;
+                }
+                // dibujar image adicional
+                if (x > (CanvasXSize-imgW)) {
+                    ctx.drawImage(img, x - imgW + 1, y, imgW, imgH);
+                }
+            }
+            // dibujar imagen
+            ctx.drawImage(img, x, y,imgW, imgH);
+            // cantidad para moverse
+            x += dx;
+        }
+    </script>
+    <style type="text/css">
+        .navbar{
+            margin-bottom: 0;
+            border-radius: 0;
+       
+        }
+        footer{
+            background-color: #f2f2f2;
+            padding: 25px;
+        }
+        body{
+            background-color: #E7EDED;
+        }
+        li{
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">Jolie et Douce</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" 
+            data-target="#navbarSupportedContent1" aria-controls="navbarSupportedContent1"
+            aria-expanded="false" aria-label="Toggle navegacion">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent1">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="#">Inicio</a>
+                </li>
+            </ul> 
+        </div>
+        <form>
+            <form>
+                
+                <span style="color: white">Ingrese nombre de producto:</span>
+                <input type="text" name="nombre" id="nombre" placeholder="Escribir aquí">
+                <input type="button" name="saluda" value="Buscar" 
+                                                        onclick="buscar()">
+            </form>
+        </form>
+    </nav>
+    <canvas id="canvas" width="10000" height="200" position: center></canvas>
+    
+    <div class="container-fluid bg-3 text-center">
+        <h3>Catálogo</h3>
+        <br><br>
+        
+        <div id="products" class="row">
+            <br><br>
+        </div>
+    </div>
+
+    <footer class="container-fluid text-center">
+        <a href=""></a><p>©2020 - Jolie et Douce</p>
+
+    </footer>
+    
+
+</body>
+</html>
